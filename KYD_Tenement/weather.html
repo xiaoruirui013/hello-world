@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <link href="css/app.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="js/jquery-3.1.0.min.js"></script>
+    <script type="text/javascript" src="js/hmac-sha1.js"></script>
+    <script type="text/javascript" src="js/geolocation.js"></script>
+
+</head>
+<body id="weather" onload="geolocation.getLocation(showPosition, showErr)">
+<div class="weather">
+    <img class="logo" src="img/weather_logo.png" alt="logo">
+    <div class="bg">
+        <img id="bg" src="img/0.png" alt="天气">
+        <div class="text">
+            <span class="temperature"><span>0</span>&#176</span>
+            <span class="name f14">晴</span>
+        </div>
+        <div class="location">
+            <img src="img/location.png" alt="定位">
+            <p class="text">
+                <span>苏州</span><br>
+                <span>0000</span>
+            </p>
+            <span class="break fr">
+                <img src="img/break.png" alt="刷新">
+            </span>
+        </div>
+    </div>
+</div>
+<script>
+var geolocation = new qq.maps.Geolocation("ALTBZ-H3H3Q-2YX52-G6YV2-T65Q2-6MF3X", "我服V1.0");
+function showPosition(position) {
+    var uid = "UEBACC6EE1";
+    var key = "qvbt7jgw87gbvseo";
+    var ts = Math.floor((new Date()).getTime() / 1000);
+    var str = "ts=" + ts + "&uid=" + uid;
+    var sig = CryptoJS.HmacSHA1(str, key).toString(CryptoJS.enc.Base64);
+    sig = encodeURIComponent(sig);
+    str = str + "&sig=" + sig;
+    var url = "http://api.thinkpage.cn/v3/weather/now.json?location="+position.lat+":"+position.lng+"&" + str + "&callback=?";
+    $.ajax({
+        type:'post',
+        url:url,
+        dataType:'json',
+        success:function(data){
+            var weather = data.results[0];
+            $("#bg").attr("src","img/"+weather.now.code+".png");
+            $(".temperature>span").html(weather.now.temperature);
+            $("#weather>.weather>.bg>.text>.name").html(weather.now.text);
+            $("#weather>.weather>.bg>.location>.text>span:nth-child(1)").html(weather.location.name);
+            $("#weather>.weather>.bg>.location>.text>span:nth-child(3)").html(weather.last_update.substr(0 ,10));
+            $(".weather>.bg>.location>.break").click(function(){
+                window.location.reload()
+            });
+        },
+        error:function(jqXHR,textStatus,errorThrown){
+            console.log(textStatus + ' ' + errorThrown);
+        }
+    });
+}
+function showErr() {
+    document.getElementById("demo").appendChild(document.createElement('p')).innerHTML = "定位失败！";
+    document.getElementById("pos-area").scrollTop = document.getElementById("pos-area").scrollHeight;
+}
+</script>
+</body>
+</html>

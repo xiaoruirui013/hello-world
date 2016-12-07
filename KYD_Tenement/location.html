@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>前端定位模块</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <script type="text/javascript" src="js/geolocation.js"></script>
+</head>
+<body>
+<div id="pos-area">
+    <p id="demo">点击下面的按钮，获得对应信息：<br/></p>
+</div>
+<div id="btn-area">
+    <button onclick="geolocation.getLocation(showPosition, showErr)">获取精确定位信息</button>
+</div>
+<script type="text/JavaScript">
+    var geolocation = new qq.maps.Geolocation("ZRJBZ-ZI2KX-XWN4P-ZDYVH-7KM7Z-IRBFB", "wofu");
+    function showPosition(position) {
+        var json=(position);
+        console.log(json.lat)
+    }
+    function showErr() {
+        document.getElementById("demo").appendChild(document.createElement('p')).innerHTML = "定位失败！";
+        document.getElementById("pos-area").scrollTop = document.getElementById("pos-area").scrollHeight;
+    }
+</script>
+</body>
+</html>
